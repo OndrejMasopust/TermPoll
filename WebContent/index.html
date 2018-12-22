@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <!--
 	Copyright (c) <2018> <Ondrej Masopust>
-
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
 files (the "Software"), to deal in the Software without
@@ -10,10 +9,8 @@ copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the
 Software is furnished to do so, subject to the following
 conditions:
-
 The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,66 +22,101 @@ OTHER DEALINGS IN THE SOFTWARE.
 -->
 <html>
 <head>
+<!-- import the array with days to ask -->
+<script type="text/javascript" src="days.js" ></script>
+<link rel="stylesheet" href="style.css">
 <meta charset="UTF-8">
-<title>Term poll</title>
+<title>Term Poll</title>
 </head>
 <body>
 <script type="text/javascript">
-// put the days here as string
-var days = ['15. Nov',
-	'16. Nov',
-	'19. Nov',
-	'20. Nov',
-	'22. Nov',
-	'23. Nov',
-	'26. Nov',
-	'27. Nov',
-	'29. Nov',
-	'30. Nov',
-	'3. Dec',
-	'4. Dec',
-	'6. Dec',
-	'7. Dec',
-	'10. Dec',
-	'11. Dec',
-	'13. Dec',
-	'14. Dec',
-];
-var counter = -1;
 var result = [];
 var name = "";
 
-function setNewDay() {
-	counter += 1;
-	if (counter < days.length) {
-		document.getElementById("content").innerHTML = "<h1>Does " + days[counter] + " work for you?</h1>";
-		document.getElementById("content").innerHTML += "<button type='button' onclick='getTimePoll()'>Yes</button> <button type='button' onclick='setNewDay()'>No</button>";
+function setNewDay(i, fromEdit) {
+	var content = document.getElementById("content");
+	if (i < days.length) {
+		var onClickYes = "getTimePoll(" + i + ", false)";
+		var onClickNo = "setNewDay(" + (i+1) + ", false)";
+		if (fromEdit) {
+			onClickYes = "getTimePoll(" + i + ", true)";
+			onClickNo = "resetDay(" + i + ")";
+			// TODO remove the start and end values if no clicked
+		} else
+			result.push({date:days[i], start:"", end:"", notes:""});
+		content.innerHTML = "<h1>Does " + result[i].date + " work for you?</h1>";
+		content.innerHTML += "<button type='button' onclick='" + onClickYes + "'>Yes</button> <button type='button' onclick='" + onClickNo + "'>No</button>";
 	} else {
-		document.getElementById("content").innerHTML = "<h1>Thank you for your responses.</h1>";
-		document.getElementById("content").innerHTML += "<p>Please submit your answer. Do not close the window yet.</p>";
-		document.getElementById("content").innerHTML += "<button type='button' onclick='submit()'>Submit</button>";
+		content.innerHTML = "<h1>Your answers</h1>";
+		content.innerHTML += "<button type='button' onclick='submit()'>Submit</button>";
+		content.innerHTML += "<div id='editRowContainer'>";
+		var i;
+		for (i = 0; i < result.length; i++) {
+			var time = "Cannot make it";
+			var notes = "";
+			if (result[i].start != "" || result[i].end != "")
+				time = result[i].start + " - " + result[i].end;
+			if (result[i].notes != "")
+				notes = "<div class='notes'>" + result[i].notes +"</div>";
+			content.innerHTML += "<div class='editRow' id='row" + i + "'><span class='dateTime'>" + result[i].date + ": " + time +  "</span><div class='editButton' id='edit" + i + "' onClick='setNewDay(" + i +", true)'>Edit</div>" + notes + "</div>";
+			if (result[i].notes != "")
+				document.getElementById("row" + i).style.paddingBottom = "1px";
+			else
+				document.getElementById("edit" + i).style.borderBottomRightRadius = "6px";
+
+		}
+		content.innerHTML += "</div>";
+		if (i > 8)
+			content.innerHTML += "<button type='button' onclick='submit()'>Submit</button>";
 	}
 	
 }
 
-function getTimePoll() {
-	document.getElementById("content").innerHTML = "The earliest you could start: <input type='text' placeholder='earliest' id='earliest'><br>";
-	document.getElementById("content").innerHTML += "The latest you could end: <input type='text' placeholder='latest' id='latest'><br>";
-	document.getElementById("content").innerHTML += "<textarea id='notes' rows='5' cols='50' placeholder='Your notes'></textarea><br>";
-	document.getElementById("content").innerHTML += "<button type='button' onclick='saveDay()'>Next</button>";
+function getTimePoll(i, fromEdit) {
+	var day = result[i];
+	var content = document.getElementById("content");
+	var start = "";
+	var end = "";
+	var notes = "";
+	if (fromEdit) {
+		start = result[i].start;
+		end = result[i].end;
+		notes = result[i].notes;
+	}
+	content.innerHTML = "<h1>" + day.date + "</h1>";
+	content.innerHTML += "The earliest you could be at Evropska 88: <input type='text' placeholder='earliest' value='" + start + "' id='earliest'><br>";
+	content.innerHTML += "The latest you could end the rehearsal: <input type='text' placeholder='latest' value='" + end + "' id='latest'><br>";
+	content.innerHTML += "<textarea id='notes' rows='5' cols='50' placeholder='Your notes'>" + notes + "</textarea><br>";
+	content.innerHTML += "<button type='button' onclick='saveDay(" + i + ", " + fromEdit + ")'>Next</button>";
+	setEnterListenerToNextText("earliest", "latest");
+	setEnterListenerToNextText("latest", "notes");
 }
 
-function saveDay() {
-	result.push(days[counter] + ": " + document.getElementById("earliest").value + " - " + document.getElementById("latest").value + " (" + document.getElementById("notes").value + ")");
-	setNewDay();
+function saveDay(i, fromEdit) {
+	result[i].start = document.getElementById("earliest").value;
+	result[i].end = document.getElementById("latest").value;
+	result[i].notes = document.getElementById("notes").value;
+	if (fromEdit)
+		i = days.length;
+	setNewDay(i+1, fromEdit);
 }
 
 function saveName() {
 	name = document.getElementById("name").value;
-	setNewDay();
+	setNewDay(0, false);
+}
+
+function resetDay(i) {
+	result[i].start = "";
+	result[i].end = "";
+	result[i].notes = "";
+	setNewDay(days.length, true);
 }
 
 function submit() {
+	var content = document.getElementById("content");
+	content.innerHTML = "<h1>Please Wait</h1>";
+
 	var xhttp = new XMLHttpRequest();
 	
 	xhttp.onreadystatechange = function() {
@@ -95,7 +127,36 @@ function submit() {
 	
 	xhttp.open("POST", "submit.php", true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhttp.send("name=" + name + "&result=" + result.toString());
+	var resultStr = "";
+	var i;
+		for (i = 0; i < result.length; i++) {
+			resultStr += days[i];
+			resultStr += ": " + result[i].start;
+			resultStr += " - " + result[i].end;
+			resultStr += "\n(" + result[i].notes;
+			resultStr += ")\n\n";
+		}
+	xhttp.send("name=" + name + "&result=" + resultStr);
+}
+
+function setEnterListenerToButton(elId) {
+	var textInput = document.getElementById(elId);
+	textInput.addEventListener("keyup", function(event) {
+		// if enter was pressed
+		if (event.keyCode == 13) {
+			document.getElementsByTagName("button")[0].click();
+		}
+	});
+}
+
+function setEnterListenerToNextText(elId, nextElId) {
+	var textInput = document.getElementById(elId);
+	textInput.addEventListener("keyup", function(event) {
+		// if enter was pressed
+		if (event.keyCode == 13) {
+			document.getElementById(nextElId).focus();
+		}
+	});
 }
 </script>
 
@@ -104,7 +165,9 @@ function submit() {
 <input type="text" id="name" placeholder="name"><br>
 <button onclick="saveName()">Next</button>
 </div>
-
+<script type="text/javascript">
+setEnterListenerToButton("name");
+</script>
 
 </body>
 </html>

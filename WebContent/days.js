@@ -1,4 +1,3 @@
-<?php 
 /*
 Copyright (c) <2018> <Ondrej Masopust>
 Permission is hereby granted, free of charge, to any person
@@ -20,8 +19,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */ 
-$msg = $_POST["name"] . "\n" . $_POST["result"];
-$msg = wordwrap($msg, 70);
-mail("example@example.com", "Term poll answer from " . $_POST["name"], $msg, "From: example@example.com");
-echo "OK";
-?>
+var days = ['30. November',
+	'6. December',
+	'13. December',
+];

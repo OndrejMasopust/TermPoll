@@ -1,0 +1,107 @@
+/*
+Copyright (c) <2018> <Ondrej Masopust>
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/ 
+
+BODY {
+	font-family: sans-serif;
+}
+
+#content {
+	max-width: 500px;
+	margin: 100px auto;
+	text-align: center;
+}
+
+INPUT {
+	margin-bottom: 18px;
+	font-size: 1.2em;
+	padding: 3px;
+}
+
+BUTTON {
+	border-radius: 2px;
+	border: thin solid #3360C9;
+	background-color: #3360C9;
+	color: #F3F3F3;
+	font-size: 1.1em;
+}
+
+BUTTON:hover, .editButton {
+	cursor: pointer;
+}
+
+TEXTAREA, INPUT {
+	border: thin solid #707070;
+	border-radius: 2px;
+}
+
+TEXTAREA {
+	font-size: 1.1em;
+	max-width: 80%;
+}
+
+#editRowContainer {
+	margin-bottom: 8px;
+	margin-top: 8px;
+}
+
+.editRow {
+	max-width: 400px;
+	margin: 3px auto;
+	padding-left: 2px;
+	line-height: 2em;
+	border-radius: 6px;
+	background-color: #8CAEFF;
+	font-size: 1.1em;
+}
+
+/*only dateTime elements that are inside editRow element*/
+.editRow .dateTime {
+	white-space: nowrap;
+	display: inline-block;
+	overflow: scroll;
+	width: 78%;
+}
+
+/*only notes elements that are inside editRow element*/
+.editRow .notes {
+	line-height: 1.1em;
+	font-size: 0.9em;
+	width: 90%;
+	margin: 6px auto;
+	padding: 3px;
+	text-align: left;
+	max-height: 3.7em;
+	overflow: scroll;
+	background-color: #AFC7FF;
+}
+
+.editButton {
+	background-color: green;
+	float: right;
+	height: 100%;
+	padding-right: 9px;
+	padding-left: 9px;
+	border-top-right-radius: 6px;
+	background-color: #3360C9;
+	color: #F3F3F3;
+	font-size: 1.1em;
+}
