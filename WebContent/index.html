@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) <2018> <Ondrej Masopust>
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Term poll</title>
+</head>
+<body>
+<script type="text/javascript">
+// put the days here as string
+var days = ['15. Nov',
+	'16. Nov',
+	'19. Nov',
+	'20. Nov',
+	'22. Nov',
+	'23. Nov',
+	'26. Nov',
+	'27. Nov',
+	'29. Nov',
+	'30. Nov',
+	'3. Dec',
+	'4. Dec',
+	'6. Dec',
+	'7. Dec',
+	'10. Dec',
+	'11. Dec',
+	'13. Dec',
+	'14. Dec',
+];
+var counter = -1;
+var result = [];
+var name = "";
+
+function setNewDay() {
+	counter += 1;
+	if (counter < days.length) {
+		document.getElementById("content").innerHTML = "<h1>Does " + days[counter] + " work for you?</h1>";
+		document.getElementById("content").innerHTML += "<button type='button' onclick='getTimePoll()'>Yes</button> <button type='button' onclick='setNewDay()'>No</button>";
+	} else {
+		document.getElementById("content").innerHTML = "<h1>Thank you for your responses.</h1>";
+		document.getElementById("content").innerHTML += "<p>Please submit your answer. Do not close the window yet.</p>";
+		document.getElementById("content").innerHTML += "<button type='button' onclick='submit()'>Submit</button>";
+	}
+	
+}
+
+function getTimePoll() {
+	document.getElementById("content").innerHTML = "The earliest you could start: <input type='text' placeholder='earliest' id='earliest'><br>";
+	document.getElementById("content").innerHTML += "The latest you could end: <input type='text' placeholder='latest' id='latest'><br>";
+	document.getElementById("content").innerHTML += "<textarea id='notes' rows='5' cols='50' placeholder='Your notes'></textarea><br>";
+	document.getElementById("content").innerHTML += "<button type='button' onclick='saveDay()'>Next</button>";
+}
+
+function saveDay() {
+	result.push(days[counter] + ": " + document.getElementById("earliest").value + " - " + document.getElementById("latest").value + " (" + document.getElementById("notes").value + ")");
+	setNewDay();
+}
+
+function saveName() {
+	name = document.getElementById("name").value;
+	setNewDay();
+}
+
+function submit() {
+	var xhttp = new XMLHttpRequest();
+	
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			document.getElementById("content").innerHTML = "<h1>The answer was succsefully submited. Thank you. You can close the window now.</h1>"
+		}
+	};
+	
+	xhttp.open("POST", "submit.php", true);
+	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.send("name=" + name + "&result=" + result.toString());
+}
+</script>
+
+<div id="content">
+<h1>Enter your name:</h1>
+<input type="text" id="name" placeholder="name"><br>
+<button onclick="saveName()">Next</button>
+</div>
+
+
+</body>
+</html>
